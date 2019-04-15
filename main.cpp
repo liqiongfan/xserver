@@ -5,12 +5,12 @@
 int main()
 {
 	std::string request_data = "POST index.php?a=hello&b=world HTTP/1.1\r\n"
-							   "Content-Type: application/json;charset=utf-8\r\n"
-							   "Status Code: 200 OK\r\n"
+				   "Content-Type: application/json;charset=utf-8\r\n"
+				   "Status Code: 200 OK\r\n"
 	                           "Content-Length: 11\r\n"
-						       "Token: whattokenis\r\n"
-		                       "\r\n"
-					           "Hello WorldXaop";
+				   "Token: whattokenis\r\n"
+		                   "\r\n"
+				   "Hello WorldXaop";
 
 	xserver_parser parser;
 	xserver_parser::string_size _pos = 0;
