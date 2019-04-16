@@ -72,7 +72,7 @@ xserver_parser::parse_http_stream(xserver_parser::string &data, string_size &_af
 				headers.insert({
 	               _key,
 	               data.substr(_j, i - _j)
-               });
+                });
 				_colon_i = 0;
 				_line_i = i + 2;
 			} else if ( data.at(i + 2) == '\r' && data.at(i + 3) == '\n' )
