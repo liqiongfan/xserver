@@ -14,4 +14,4 @@ add_executable(
     kernel/tools/server_chain.h
 )
 
-target_link_libraries(Xserver pthread)
+target_link_libraries(Xserver pthread dl)

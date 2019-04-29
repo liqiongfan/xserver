@@ -87,22 +87,44 @@ server_job_thread(void *arg)
 
 				if (ev[i].events & EPOLLIN) {
 					/* EPOLLIN event comming */
-					char _buff[256] = {0};
-					if (read(ev[i].data.fd, _buff, 256) == 0) {
+					char _buff[65535] = {0};
+					if (read(ev[i].data.fd, _buff, 65535) == 0) {
 						/* Read data number: 0
 						 * means that the peers close the connection
 						 * so remove it from the epoll queue */
 						epoll_ctl(_thread_data[_tid], EPOLL_CTL_DEL, ev[i].data.fd, NULL);
 						continue;
 					}
+
+					/* Get the request url, if the request url is / dlopen the default share library
+					 * Default format: GET / HTTP/1.1*/
+					int j = 0, _url_i = 0;
+					char _request_url[256] = {0};
+					for ( j = 0; j < 256; ++j) {
+						if (_buff[j] == ' ' ) {
+							if ( !_url_i ) _url_i = j + 1;
+							else {
+								strncpy(_request_url, _buff + _url_i, (size_t)(j - _url_i)); break;
+							}
+						}
+					}
+
 					/* Response the client with the string */
-					const static char *
-		                  _buffer_data = "HTTP/1.1 200 OK\r\n"
-		                                 "Content-Type:application/json;charset=utf-8\r\n"
-		                                 "Content-Length:26\r\n"
-		                                 "Connection: close\r\n"
-		                                 "\r\n"
-		                                 "{\"server\":\"Xserver 0.1.2\"}";
+					char _buffer_data[200] = "HTTP/1.1 200 OK\r\n"
+								 "Content-Type:application/json;charset=utf-8\r\n"
+		                        "Content-Length:26\r\n"
+		                        "Connection: close\r\n"
+		                        "\r\n";
+
+					if ( strlen(_request_url) == 1 && *_request_url == '/' ) {
+						void *handle = dlopen("../kernel/extensions/info.so", RTLD_NOW);
+						FUNC f = (FUNC)dlsym(handle, "info");
+						char *s = f();
+						strncat(_buffer_data, s, strlen(s));
+					} else {
+						strncat(_buffer_data, "{\"server\":\"Xserver 0.1.3\"}", 26);
+					}
+
 					write(ev[i].data.fd, _buffer_data, strlen(_buffer_data));
 					shutdown(ev[i].data.fd, SHUT_WR);
 				} else if (ev[i].events & (EPOLLHUP | EPOLLRDHUP)) {

@@ -15,6 +15,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <dlfcn.h>
 #ifdef __linux__
 #include <sys/epoll.h>
 #endif
@@ -30,6 +31,8 @@
 	#define true 1
 	#define false 0
 #endif
+
+typedef char *(*FUNC)();
 
 /*
  * All sub-thread max number is 256, if you want to incr it.
