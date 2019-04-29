@@ -15,6 +15,9 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdio.h>
+#ifdef __linux__
+#include <sys/epoll.h>
+#endif
 
 #ifdef __cplusplus
 	#define EMPTY_PTR nullptr
@@ -24,6 +27,8 @@
 	#define EMPTY_PTR NULL
 	#define __BEGIN_DECL
 	#define __END_DECL
+	#define true 1
+	#define false 0
 #endif
 
 /*
@@ -33,7 +38,11 @@
 pthread_t       _threads[MAX_THREAD_NUMBER];
 pthread_mutex_t _thread_mutex[MAX_THREAD_NUMBER];
 pthread_cond_t  _thread_cond[MAX_THREAD_NUMBER];
+#ifdef __linux__
+int             _thread_data[MAX_THREAD_NUMBER];
+#else
 _list          *_thread_data[MAX_THREAD_NUMBER];
+#endif
 int             _thread_id[MAX_THREAD_NUMBER];
 int             _thread_number;
 

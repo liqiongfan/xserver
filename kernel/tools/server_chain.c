@@ -28,7 +28,7 @@ _list *
 list_first(_list *data)
 {
 	_list *temp = data;
-	while (1)
+	while (true)
 	{
 		if (temp->_previous)
 		{
@@ -48,15 +48,24 @@ list_del(_list *data, _list *iter)
 	{
 		if (temp->_fd == iter->_fd)
 		{
-			if ( !temp->_previous ) {
+			if ( !temp->_previous && !temp->_next ) {
+				free(temp);break;
+			} else if ( !temp->_previous && temp->_next ) {
 				_t = temp;
-				free(temp);
 				_t->_next->_previous = EMPTY_PTR;
+				free(temp);
+				break;
+			} else if ( temp->_previous && !temp->_next ) {
+				_t = temp;
+				_t->_previous->_next = EMPTY_PTR;
+				free(temp);
+				break;
 			} else {
 				_t = temp;
-				free(temp);
 				_t->_previous->_next = _t->_next;
 				_t->_next->_previous = _t->_previous;
+				free(temp);
+				break;
 			}
 		}
 		temp = temp->_next;
@@ -74,7 +83,7 @@ push_back_list(_list *list, _list *data)
 	{
 		_list *last_node = list;
 
-		while ( 1 ) {
+		while ( true ) {
 			if ( last_node->_next ) {
 				last_node = last_node->_next;
 			} else break;

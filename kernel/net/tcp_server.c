@@ -51,21 +51,69 @@ server_job_thread(void *arg)
 {
 	int _tid = *((int *)arg);
 
-	printf("before thread_id: %d, t_id: %ld\n", _tid, pthread_self());
-
 	/* Wait signal and wakeup from sleep */
 	pthread_cond_wait( &(_thread_cond[_tid]), &(_thread_mutex[_tid]) );
 
-	_list *data = _thread_data[_tid], *head_value = list_first(data);
-
-	int _fd;
-	LIST_FOR_EACH_FD(head_value, &_fd){
-		if (_fd) {
-			printf("file descriptor: %d\n", _fd);
-			char *_buff = "HTTP/1.1 200 OK\r\nContent-Type:application/json;charset=utf-8\r\nContent-Length:10\r\n\r\n{\"a\":\"aa\"}";
-			write(_fd, _buff, strlen(_buff));
+#if 0
+	_list *data = _thread_data[_tid], *head_value = list_first(data), *tmp;
+	LIST_FOR_EACH_ITER(head_value, tmp) {
+		if (tmp->_fd) {
+			char buff[256] = {0};
+			if (read(tmp->_fd, buff, 256) == 0) continue;
+			char *_buff = "HTTP/1.1 200 OK\r\nContent-Type:application/json;charset=utf-8\r\nConnection: close\r\nContent-Length:10\r\n\r\n{\"a\":\"aa\"}";
+			write(tmp->_fd, _buff, strlen(_buff));
+			shutdown(tmp->_fd, SHUT_WR);
+			tmp->status = 1;
+			list_del(head_value, tmp);
 		}
 	} LIST_FOR_EACH_END;
+#endif
+
+#ifdef __linux__
+
+	int i;
+	struct epoll_event ev[50];
+
+	while ( true ) {
+		/* Wait until after timeout epoll_wait will return by code: 0 */
+		int _ready = epoll_wait(_thread_data[_tid], ev, 50, -1);
+
+		if ( _ready ) {
+			/* if event coming, loop events
+			 * with the different events
+			 * EPOLLIN: I/O read event
+			 * EPOLLHUP: Peers close the connection */
+			for (i = 0; i < 50; ++i) {
+
+				if (ev[i].events & EPOLLIN) {
+					/* EPOLLIN event comming */
+					char _buff[256] = {0};
+					if (read(ev[i].data.fd, _buff, 256) == 0) {
+						/* Read data number: 0
+						 * means that the peers close the connection
+						 * so remove it from the epoll queue */
+						epoll_ctl(_thread_data[_tid], EPOLL_CTL_DEL, ev[i].data.fd, NULL);
+						continue;
+					}
+					/* Response the client with the string */
+					const static char *
+		                  _buffer_data = "HTTP/1.1 200 OK\r\n"
+		                                 "Content-Type:application/json;charset=utf-8\r\n"
+		                                 "Content-Length:26\r\n"
+		                                 "Connection: close\r\n"
+		                                 "\r\n"
+		                                 "{\"server\":\"Xserver 0.1.2\"}";
+					write(ev[i].data.fd, _buffer_data, strlen(_buffer_data));
+					shutdown(ev[i].data.fd, SHUT_WR);
+				} else if (ev[i].events & (EPOLLHUP | EPOLLRDHUP)) {
+					/* Remove fd from epoll wait queue. */
+					epoll_ctl(_thread_data[_tid], EPOLL_CTL_DEL, ev[i].data.fd, NULL);
+				}
+			} /* end for */
+		} /* end if ready */
+	} /* end while true */
+
+#endif
 
 	return EMPTY_PTR;
 }
@@ -87,8 +135,11 @@ xserver_init_threads(const int thread_number)
 		pthread_mutex_init( &_thread_mutex[i], EMPTY_PTR );
 
 		/* Initialise the _list data */
+#if __linux__
+		_thread_data[i] = epoll_create(1);
+#else
 		_thread_data[i] = init_list();
-
+#endif
 		/* Pthread id */
 		_thread_id[i] = i;
 		pthread_create(&_threads[i], EMPTY_PTR, server_job_thread, &_thread_id[i]);
@@ -107,8 +158,11 @@ xserver_run( const int _sock_fd )
 	int _client_fd, dispatch_id;
 	_sockaddr client_addr;
 	_sockaddr_len  client_addr_len;
+#ifdef __linux__
+	struct epoll_event ev;
+#endif
 
-	while ( 1 )
+	while ( true )
 	{
 		_client_fd = accept( _sock_fd, (struct sockaddr*)&client_addr, &client_addr_len );
 		if ( _client_fd )
@@ -117,15 +171,19 @@ xserver_run( const int _sock_fd )
 			 * After assigning notify the thread to wake it up from sleepy. */
 			dispatch_id = _client_fd % _thread_number;
 
-			_list *data = init_list();
-			data->_fd = _client_fd;
-			data->status = 0;
-
 			printf("new client: %d, dispatch_id: %d\n", _client_fd, dispatch_id);
 
 			/* Add the client fd to the thread_data _list */
+#ifdef __linux__
+			ev.events = EPOLLIN;
+			ev.data.fd = _client_fd;
+			epoll_ctl(_thread_data[dispatch_id], EPOLL_CTL_ADD, _client_fd, &ev);
+#else
+			_list *data = init_list();
+			data->_fd = _client_fd;
+			data->status = 0;
 			push_back_list(_thread_data[dispatch_id], data);
-
+#endif
 			/* notify the thread */
 			pthread_cond_signal(&_thread_cond[dispatch_id]);
 		}

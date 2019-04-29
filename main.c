@@ -6,13 +6,13 @@
 int main()
 {
 
-	xserver_init_threads(5);
+	xserver_init_threads(3);
 
 	int sockd_fd = xserver_init(EMPTY_PTR, 0);
 
 	xserver_run(sockd_fd);
 
-	for (int i = 0; i < 5; ++i) {
+	for (int i = 0; i < 3; ++i) {
 		pthread_join(_threads[i], EMPTY_PTR);
 	}
 
