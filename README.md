@@ -6,6 +6,16 @@ Xserver 是一个完全使用C语言编写的多线程并发性服务器程序,�
 Xserver启动一个TCP监听，然后生成子线程等待主线程派发任务，主线程一直等待客户端链接，如果客户端链接成功，那么派发这个连接的客户端给对应的子线程
 子线程里面使用epoll完成多路复用，子线程读取客户端的请求URL信息后，加载对应的extension目录的.so文件，然后调用其方法获取返回的文本信息返回给客户端
 
+目标机器配置：
+
+```
+josin@josin-PC:~/xserver$ grep MemTotal /proc/meminfo
+MemTotal:       16324232 kB
+josin@josin-PC:~/xserver$ cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c
+      4  Intel(R) Core(TM) i5-4460  CPU @ 3.20GHz
+
+```
+
 概括而言：
 
 ```
