@@ -1,0 +1,1 @@
+This directory contains the crypt module: such as md5 | sha | base64

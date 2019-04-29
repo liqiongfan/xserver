@@ -1,8 +1,17 @@
 cmake_minimum_required(VERSION 3.13)
-project(xserver)
+project(Xserver C)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_C_STANDARD 99)
 
-add_executable(xserver main.cpp kernel/parser.cpp kernel/parser.h exception/base_exception.cpp exception/base_exception.h kernel/tcp_server.cpp kernel/tcp_server.h)
+add_executable(
+    Xserver main.c
+    kernel/config.h
+    kernel/net/tcp_server.c
+    kernel/net/tcp_server.h
+    kernel/net/tcp_server.c
+    kernel/net/tcp_server.h
+    kernel/tools/server_chain.c
+    kernel/tools/server_chain.h
+)
 
-target_link_libraries(xserver pthread)
+target_link_libraries(Xserver pthread)
