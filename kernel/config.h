@@ -27,7 +27,7 @@
 	#define EMPTY_PTR NULL
 	#define __BEGIN_DECL
 	#define __END_DECL
-	#define true 1
+	#define true  1
 	#define false 0
 #endif
 
@@ -50,8 +50,7 @@ typedef char *(*FUNC)();
 #define LOG_INFO(level, msg, ...)
 #endif
 
-/*
- * All sub-thread max number is 256, if you want to incr it.
+/* All sub-thread max number is 256, if you want to incr it.
  * you should to modify the following parameter */
 #define MAX_THREAD_NUMBER 256
 pthread_t       _threads[MAX_THREAD_NUMBER];
