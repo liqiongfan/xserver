@@ -10,8 +10,7 @@ add_executable(
     kernel/net/tcp_server.h
     kernel/net/tcp_server.c
     kernel/net/tcp_server.h
-    kernel/tools/server_chain.c
-    kernel/tools/server_chain.h
+    kernel/tools/list.c kernel/tools/list.h
 )
 
 target_link_libraries(Xserver pthread dl)

@@ -10,7 +10,6 @@
 
 #include <stdlib.h>
 #include <assert.h>
-#include "tools/server_chain.h"
 #include <pthread.h>
 #include <string.h>
 #include <unistd.h>
@@ -32,7 +31,24 @@
 	#define false 0
 #endif
 
+/* The debug mode, when in production set DEBUG to 0 otherwise 1 */
+#define DEBUG true
+
 typedef char *(*FUNC)();
+
+/* Some macros for LOG print.
+ * default log level is INFO_LEVEL, This level is the most widely common used level,
+ * kernel will output every log info to stdout */
+#define LOG_ERROR_LEVEL 1
+#define LOG_WARN_LEVEL  2
+#define LOG_INFO_LEVEL  3
+#if DEBUG
+#define LOG_INFO(level, msg, ...) \
+    if ( level <= LOG_INFO_LEVEL ) { \
+        printf(msg, __VA_ARGS__); }
+#else
+#define LOG_INFO(level, msg, ...)
+#endif
 
 /*
  * All sub-thread max number is 256, if you want to incr it.

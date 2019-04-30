@@ -15,7 +15,6 @@
 #include <string.h>
 #include <assert.h>
 #include "../config.h"
-#include "../tools/server_chain.h"
 
 __BEGIN_DECL
 

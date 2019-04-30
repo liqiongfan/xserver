@@ -193,7 +193,7 @@ xserver_run( const int _sock_fd )
 			 * After assigning notify the thread to wake it up from sleepy. */
 			dispatch_id = _client_fd % _thread_number;
 
-			printf("new client: %d, dispatch_id: %d\n", _client_fd, dispatch_id);
+			LOG_INFO(LOG_ERROR_LEVEL, "new client: %d, dispatched to: %d\n", _client_fd, dispatch_id);
 
 			/* Add the client fd to the thread_data _list */
 #ifdef __linux__
