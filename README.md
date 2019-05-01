@@ -4,7 +4,7 @@
 
 Xserver是一个完全采用C语言编写的多线程、并发型、模块化的服务器程序，支持Linux系统环境，优先采用epoll多路复用机制，具体的设计体系架构如下图所示：
 
-![https://www.supjos.cn/Xserver.png](https://www.supjos.cn/Xserver.png)
+![](https://raw.githubusercontent.com/liqiongfan/xserver/master/Xserver.png)
 
 Xserver的体系架构简单、性能把控度100%，因为采用C语言开发因此能够将机器的性能压榨到极致，比较适合推送服务、消息IM系统等并发场景比较高的系统使用。
 
