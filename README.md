@@ -1,27 +1,22 @@
 ### Tiny & Effective Server: Xserver ###
 
-#### Which is Xserver?
+#### Xserver是什么？
 
-Xserver 是一个完全使用C语言编写的多线程并发性服务器程序,采用的设计思路：
-Xserver启动一个TCP监听，然后生成子线程等待主线程派发任务，主线程一直等待客户端链接，如果客户端链接成功，那么派发这个连接的客户端给对应的子线程
-子线程里面使用epoll完成多路复用，子线程读取客户端的请求URL信息后，加载对应的extension目录的.so文件，然后调用其方法获取返回的文本信息返回给客户端
+Xserver是一个完全采用C语言编写的多线程、并发型、模块化的服务器程序，支持Linux系统环境，优先采用epoll多路复用机制，具体的设计体系架构如下图所示：
 
-目标机器配置：
+![https://github.com/liqiongfan/xserver/Xserver.png]()
 
-```
-josin@josin-PC:~/xserver$ grep MemTotal /proc/meminfo
-MemTotal:       16324232 kB
-josin@josin-PC:~/xserver$ cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c
-      4  Intel(R) Core(TM) i5-4460  CPU @ 3.20GHz
-```
+Xserver的体系架构简单、性能把控度100%，因为采用C语言开发因此能够将机器的性能压榨到极致，比较适合推送服务、消息IM系统等并发场景比较高的系统使用。
 
-概括而言：
+
+
+压力测试的目标机器配置：
 
 ```
-client -> Xserver -> parse request url -> loading .so -> calling function -> response the data to client
+16GB内存，4核i5-4460 3.2GHz的Intel CPU
 ```
 
-压力测试
+压力测试命令与测试结果：
 ```
 ab -n100000 -c1000 -r -k http://localhost:8181/
 ```
