@@ -9,8 +9,7 @@
 #include "../config.h"
 
 int
-/*
- * Init the socket with the given host & port, or the following instruction:
+/* Init the socket with the given host & port, or the following instruction:
  * This function use the IPv4 as default. or IPv6 if you like
  * host: NULL will let the kernel to use the 0.0.0.0 or INADDR_ANY
  * port: 0 will let the kernel to use the 8181
@@ -53,22 +52,7 @@ server_job_thread(void *arg)
 
 	/* Wait signal and wakeup from sleep */
 	pthread_cond_wait( &(_thread_cond[_tid]), &(_thread_mutex[_tid]) );
-
-#if 0
-	_list *data = _thread_data[_tid], *head_value = list_first(data), *tmp;
-	LIST_FOR_EACH_ITER(head_value, tmp) {
-		if (tmp->_fd) {
-			char buff[256] = {0};
-			if (read(tmp->_fd, buff, 256) == 0) continue;
-			char *_buff = "HTTP/1.1 200 OK\r\nContent-Type:application/json;charset=utf-8\r\nConnection: close\r\nContent-Length:10\r\n\r\n{\"a\":\"aa\"}";
-			write(tmp->_fd, _buff, strlen(_buff));
-			shutdown(tmp->_fd, SHUT_WR);
-			tmp->status = 1;
-			list_del(head_value, tmp);
-		}
-	} LIST_FOR_EACH_END;
-#endif
-
+	
 #ifdef __linux__
 
 	int i;
@@ -97,7 +81,8 @@ server_job_thread(void *arg)
 					}
 
 					/* Get the request url, if the request url is / dlopen the default share library
-					 * Default format: GET / HTTP/1.1*/
+					 * Default format: GET / HTTP/1.1
+					 * RequestURI mapping rule: /dir/filename/function-name */
 					int j = 0, _url_i = 0;
 					char _request_url[256] = {0};
 					for ( j = 0; j < 256; ++j) {
@@ -111,7 +96,7 @@ server_job_thread(void *arg)
 
 					/* Response the client with the string */
 					char _buffer_data[200] = "HTTP/1.1 200 OK\r\n"
-								 "Content-Type:application/json;charset=utf-8\r\n"
+                                "Content-Type:application/json;charset=utf-8\r\n"
 		                        "Content-Length:26\r\n"
 		                        "Connection: close\r\n"
 		                        "\r\n";
@@ -145,11 +130,12 @@ void
  * Init the sub-thread with the given thread_number or 0 to use the default number : 2
  * In default: there are only two thread: main thread and only child-thread
  * Main thread do the job assign the newly client to the sub-thread
- * Child thread do tht client's connections from the main thread */
+ * Child thread do the client's connections from the main thread */
 xserver_init_threads(const int thread_number)
 {
-
-	for (int i = 0; i < thread_number; ++i) {
+    int i;
+    
+	for (i = 0; i < thread_number; ++i) {
 		/* Pthread cond. */
 		pthread_cond_init( &_thread_cond[i], EMPTY_PTR );
 
@@ -159,8 +145,6 @@ xserver_init_threads(const int thread_number)
 		/* Initialise the _list data */
 #if __linux__
 		_thread_data[i] = epoll_create(1);
-#else
-		_thread_data[i] = init_list();
 #endif
 		/* Pthread id */
 		_thread_id[i] = i;
@@ -190,7 +174,7 @@ xserver_run( const int _sock_fd )
 		if ( _client_fd )
 		{
 			/* Assign the newly client to it's child-thread
-			 * After assigning notify the thread to wake it up from sleepy. */
+			 * After assigning notify the thread to wake it up from sleepy state. */
 			dispatch_id = _client_fd % _thread_number;
 
 			LOG_INFO(LOG_ERROR_LEVEL, "new client: %d, dispatched to: %d\n", _client_fd, dispatch_id);
@@ -200,11 +184,6 @@ xserver_run( const int _sock_fd )
 			ev.events = EPOLLIN;
 			ev.data.fd = _client_fd;
 			epoll_ctl(_thread_data[dispatch_id], EPOLL_CTL_ADD, _client_fd, &ev);
-#else
-			_list *data = init_list();
-			data->_fd = _client_fd;
-			data->status = 0;
-			push_back_list(_thread_data[dispatch_id], data);
 #endif
 			/* notify the thread */
 			pthread_cond_signal(&_thread_cond[dispatch_id]);

@@ -1,7 +1,7 @@
 /**
- * File: ${FILE} for project Xserver
+ * File: config.h for project Xserver
  * Email: xeapplee@gmail.com
- * website: https://www.supjos.cn
+ * Website: https://www.supjos.cn
  * Author: Josin 
  */
 
@@ -58,8 +58,6 @@ pthread_mutex_t _thread_mutex[MAX_THREAD_NUMBER];
 pthread_cond_t  _thread_cond[MAX_THREAD_NUMBER];
 #ifdef __linux__
 int             _thread_data[MAX_THREAD_NUMBER];
-#else
-_list          *_thread_data[MAX_THREAD_NUMBER];
 #endif
 int             _thread_id[MAX_THREAD_NUMBER];
 int             _thread_number;

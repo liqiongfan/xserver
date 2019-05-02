@@ -125,11 +125,8 @@ HEAD_LIST(list *_list)
 {
 	list *temp = _list, *__t = EMPTY_PTR;
 
-	while ( true )
+	while ( temp->previous )
 	{
-		/* first to break the while loop */
-		if ( !temp->previous ) break;
-
 		if ( temp->node_status == LIST_NODE_DELETE )
 		{
 			/* Node need be deleted. */
@@ -167,13 +164,19 @@ HEAD_LIST(list *_list)
 	return temp;
 }
 
+/* The macro for list using
+ * for example:
+ * The typeof list is (list *)
+ * val's type is (list *) too:
+ * LIST_FOREACH_VAL(list, val) {
+ *     printf("%d\t", val->node.data);
+ * } LIST_FOREACH_END(); */
 #define LIST_FOREACH_VAL(_list, _val) do {\
 	list *t = HEAD_LIST(_list); \
 	for (; t != EMPTY_PTR ; t = t->next) {\
 		if ( t->node_status == LIST_NODE_DELETE )\
             continue; \
 		_val = t;
-
 #define LIST_FOREACH_END() }} while(0)
 
 

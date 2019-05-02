@@ -7,16 +7,17 @@
 
 int main()
 {
+    int sock_fd, thread_number = 3, i;
 
-	// xserver_init_threads(3);
-	//
-	// int sockd_fd = xserver_init(EMPTY_PTR, 0);
-	//
-	// xserver_run(sockd_fd);
-	//
-	// for (int i = 0; i < 3; ++i) {
-	// 	pthread_join(_threads[i], EMPTY_PTR);
-	// }
+	xserver_init_threads(thread_number);
+    
+    sock_fd = xserver_init(EMPTY_PTR, 0);
+
+	xserver_run(sock_fd);
+
+	for (i = 0; i < thread_number; ++i) {
+		pthread_join(_threads[i], EMPTY_PTR);
+	}
 
 	// list *data = EMPTY_PTR;
 	// for (int i = 0; i < 10; ++i) {
@@ -32,11 +33,6 @@ int main()
 	// } LIST_FOREACH_END();
 	//
 	// DESTROY_LIST(data);
-
-	char buff[256] = {0};
-	char *str = "hello world";
-	sha256(str, strlen(str) - 1, buff);
-	printf("%s\n", buff);
 
 	return 0;
 }
