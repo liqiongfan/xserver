@@ -6,6 +6,8 @@
  */
 
 #include "tcp_server.h"
+#include "../tools/string.h"
+#include "../tools/list.h"
 #include "../config.h"
 
 int
@@ -49,18 +51,21 @@ void *
 server_job_thread(void *arg)
 {
 	int _tid = *((int *)arg);
-
+ 
+sleep_for_new_client:
+ 
 	/* Wait signal and wakeup from sleep */
 	pthread_cond_wait( &(_thread_cond[_tid]), &(_thread_mutex[_tid]) );
 	
 #ifdef __linux__
-
-	int i;
+	int i, _next_pos, _ready;
+    char *_buff, *_request_uri;
+    list *__t, *stream_request_data;
 	struct epoll_event ev[50];
 
 	while ( true ) {
-		/* Wait until after timeout epoll_wait will return by code: 0 */
-		int _ready = epoll_wait(_thread_data[_tid], ev, 50, -1);
+		/* Wait 60s until after timeout epoll_wait will return by code: 0 */
+		_ready = epoll_wait(_thread_data[_tid], ev, 50, 60);
 
 		if ( _ready ) {
 			/* if event coming, loop events
@@ -71,37 +76,40 @@ server_job_thread(void *arg)
 
 				if (ev[i].events & EPOLLIN) {
 					/* EPOLLIN event comming */
-					char _buff[65535] = {0};
-					if (read(ev[i].data.fd, _buff, 65535) == 0) {
-						/* Read data number: 0
-						 * means that the peers close the connection
-						 * so remove it from the epoll queue */
-						epoll_ctl(_thread_data[_tid], EPOLL_CTL_DEL, ev[i].data.fd, NULL);
-						continue;
+					_buff = get_stream_from_socket(ev[i].data.fd);
+					if (!strlen(_buff)) {
+                        /* Read data number: 0
+                         * means that the peers close the connection
+                         * so remove it from the epoll queue */
+                        free(_buff);
+                        epoll_ctl(_thread_data[_tid], EPOLL_CTL_DEL, ev[i].data.fd, EMPTY_PTR);
+                        continue;
 					}
-
-					/* Get the request url, if the request url is / dlopen the default share library
-					 * Default format: GET / HTTP/1.1
-					 * RequestURI mapping rule: /dir/filename/function-name */
-					int j = 0, _url_i = 0;
-					char _request_url[256] = {0};
-					for ( j = 0; j < 256; ++j) {
-						if (_buff[j] == ' ' ) {
-							if ( !_url_i ) _url_i = j + 1;
-							else {
-								strncpy(_request_url, _buff + _url_i, (size_t)(j - _url_i)); break;
-							}
-						}
-					}
+					
+					/* Parse the http stream */
+					stream_request_data = parse_http_stream(_buff, &_next_pos);
+     
+					/* Find the request uri. */
+                    /* Get the request url, if the request url is / dlopen the default share library
+                     * Default format: GET / HTTP/1.1
+                     * RequestURI mapping rule: /dir/filename/function-name */
+                    LIST_FOREACH_VAL(stream_request_data, __t) {
+                        list_data *__k = (list_data *)__t->node.data_ptr;
+                        if (strncasecmp(__k->name, "request_uri", 11) == 0) {
+                            _request_uri = __k->value;
+                        }
+                    } LIST_FOREACH_END();
 
 					/* Response the client with the string */
-					char _buffer_data[200] = "HTTP/1.1 200 OK\r\n"
+					/* The following block need be rewrite in the next version code. */
+					char _buffer_data[200] =
+					            "HTTP/1.1 200 OK\r\n"
                                 "Content-Type:application/json;charset=utf-8\r\n"
 		                        "Content-Length:26\r\n"
 		                        "Connection: close\r\n"
 		                        "\r\n";
 
-					if ( strlen(_request_url) == 1 && *_request_url == '/' ) {
+					if ( strlen(_request_uri) == 1 && *_request_uri == '/' ) {
 						void *handle = dlopen("../kernel/extensions/info.so", RTLD_NOW);
 						FUNC f = (FUNC)dlsym(handle, "info");
 						char *s = f();
@@ -112,12 +120,20 @@ server_job_thread(void *arg)
 
 					write(ev[i].data.fd, _buffer_data, strlen(_buffer_data));
 					shutdown(ev[i].data.fd, SHUT_WR);
+					
+					/* Free the memory after used. */
+					DESTROY_LIST(stream_request_data);
+                    free(_buff);
 				} else if (ev[i].events & (EPOLLHUP | EPOLLRDHUP)) {
 					/* Remove fd from epoll wait queue. */
-					epoll_ctl(_thread_data[_tid], EPOLL_CTL_DEL, ev[i].data.fd, NULL);
+					epoll_ctl(_thread_data[_tid], EPOLL_CTL_DEL, ev[i].data.fd, EMPTY_PTR);
 				}
 			} /* end for */
 		} /* end if ready */
+		else
+        {
+            goto sleep_for_new_client;
+        }
 	} /* end while true */
 
 #endif
@@ -126,8 +142,7 @@ server_job_thread(void *arg)
 }
 
 void
-/*
- * Init the sub-thread with the given thread_number or 0 to use the default number : 2
+/* Init the sub-thread with the given thread_number or 0 to use the default number : 2
  * In default: there are only two thread: main thread and only child-thread
  * Main thread do the job assign the newly client to the sub-thread
  * Child thread do the client's connections from the main thread */

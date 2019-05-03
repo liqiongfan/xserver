@@ -7,6 +7,37 @@
 
 #include "list.h"
 
+list_data *
+/* Allocate the list data and set the default value for it. */
+INIT_LIST_DATA(char *key, char *value, int __over_alloc)
+{
+    list_data *__value__ = (list_data *)malloc( sizeof(list_data) );
+    memset(__value__, 0, sizeof(list_data));
+    strncpy(__value__->name, key, strlen(key));
+    ssize_t __length = strlen(value);
+    if ( __over_alloc )
+    {
+        char *__value__v = ( char * )malloc( sizeof( char ) * (__length + 1) );
+        memset( __value__v, 0, __length + 1 );
+        strncpy( __value__v, value, __length );
+        __value__->value = __value__v;
+    }
+    else
+    {
+        __value__->value = value;
+    }
+    
+    return __value__;
+}
+
+list_data *
+/* Init the empty list_data */
+INIT_EMPTY_DATA()
+{
+    list_data *__value__ = (list_data *)malloc( sizeof(list_data) );
+    memset(__value__, 0, sizeof(list_data));
+    return __value__;
+}
 
 list *
 /* Allocate a node for list and set default value for it.
@@ -21,6 +52,7 @@ INIT_LIST()
 	data->previous = EMPTY_PTR;
 	data->node.data = 0;
 	data->node.data_ptr = EMPTY_PTR;
+	data->delete_func = EMPTY_PTR;
 	data->node.type = LIST_NODE_CONST_TYPE;
 	assert( data != EMPTY_PTR );
 	return data;
@@ -72,14 +104,17 @@ void
 /* Destroy the list */
 DESTROY_LIST(list *__list_v)
 {
+    if ( __list_v == EMPTY_PTR ) return ;
 	list *__temp_t = HEAD_LIST(__list_v), *t;
 	while (__temp_t->next)
 	{
 		t = __temp_t->next;
 		__temp_t->next = t->next;
+		if ( t->delete_func ) t->delete_func(&(t->node));
 		free(t);
 		t = EMPTY_PTR;
 	}
+	if ( __temp_t->delete_func ) __temp_t->delete_func(&(__temp_t->node));
 	free(__temp_t);
 	__temp_t = EMPTY_PTR;
 	__list_v->previous = EMPTY_PTR;

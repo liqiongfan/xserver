@@ -12,12 +12,20 @@
 
 __BEGIN_DECL
 
+/* The type __list_node value */
+typedef struct __list_data {
+    char name[256];     /* Node key   */
+    char *value;        /* Node value */
+} list_data;
+
 /* _list_node is the node for the list */
 typedef struct _list_node {
 	int                data;     /* type: 1 */
 	void              *data_ptr; /* type: 2 */
 	int                type;     /* default 1 */
 } list_node;
+
+typedef void (*__func)(list_node *);
 
 #define LIST_NODE_CONST_TYPE 1
 #define LIST_NODE_PTR_TYPE   2
@@ -30,6 +38,7 @@ typedef struct _list {
 	struct _list      *next;
 	struct _list_node  node;
 	int                node_status;
+	__func             delete_func;
 } list;
 
 /* Get the node value from the data field or data_ptr field
@@ -53,6 +62,13 @@ typedef struct _list {
 #define LIST_GET_VAL_PTR(__list) (__list)->node
 #define LIST_DELETE(__list) (__list).node_status = LIST_NODE_DELETE
 #define LIST_DELETE_PTR(__list) (*__list).node_status = LIST_NODE_DELETE
+
+
+list_data *
+INIT_LIST_DATA(char *, char *, int);
+
+list_data *
+INIT_EMPTY_DATA();
 
 list *
 INIT_LIST();
@@ -79,41 +95,11 @@ static list *
 /* Get the end element of the list */
 END_LIST(list *_list)
 {
-	list *temp = _list, *__t = EMPTY_PTR;
+	list *temp = _list;
 
 	while ( temp->next ) {
-
-		if ( temp->node_status == LIST_NODE_DELETE )
-		{
-			if ( !temp->previous )
-			{
-				/* if previous is EMPTY */
-				__t = temp->next;
-				free(temp);
-				__t->previous = EMPTY_PTR;
-			}
-			else if ( temp->previous && temp->next )
-			{
-				/* when in middle of the list */
-				temp->previous->next = temp->next;
-				temp->next->previous = temp->previous;
-				__t = temp;
-				free(temp);
-			}
-			else if ( temp->previous && !temp->next )
-			{
-				/* when in end of the list */
-				temp->previous = EMPTY_PTR;
-				__t = temp;
-				free(temp);
-				__t->previous->next = EMPTY_PTR;
-			}
-		} else {
-			__t = temp->next;
-		}
-
 		/* Loop the next node in list. */
-		temp = __t;
+		temp = temp->next;
 	}
 
 	return temp;
@@ -123,42 +109,11 @@ static list *
 /* Get the first element of the list */
 HEAD_LIST(list *_list)
 {
-	list *temp = _list, *__t = EMPTY_PTR;
+	list *temp = _list;
 
-	while ( temp->previous )
-	{
-		if ( temp->node_status == LIST_NODE_DELETE )
-		{
-			/* Node need be deleted. */
-			if ( !temp->previous && temp->next )
-			{
-				/* First */
-				__t = temp->next;
-				free(temp);
-				__t->previous = EMPTY_PTR;
-			}
-			else if ( !temp->next && temp->previous )
-			{
-				/* End */
-				__t = temp->previous;
-				free(temp);
-				__t->next = EMPTY_PTR;
-			}
-			else if ( temp->next && temp->previous )
-			{
-				/* Middle */
-				temp->next->previous = temp->previous;
-				temp->previous->next = temp->next;
-				__t = temp->previous;
-				free(temp);
-			}
-		}
-		else
-		{
-			__t = temp->previous;
-		}
-
-		temp = __t;
+	while ( temp->previous ) {
+	    /* Loop the previous node in the list. */
+		temp = temp->previous;
 	}
 
 	return temp;
@@ -172,16 +127,16 @@ HEAD_LIST(list *_list)
  *     printf("%d\t", val->node.data);
  * } LIST_FOREACH_END(); */
 #define LIST_FOREACH_VAL(_list, _val) do {\
+    if ( _list != EMPTY_PTR ) {\
 	list *t = HEAD_LIST(_list); \
 	for (; t != EMPTY_PTR ; t = t->next) {\
 		if ( t->node_status == LIST_NODE_DELETE )\
             continue; \
 		_val = t;
-#define LIST_FOREACH_END() }} while(0)
+#define LIST_FOREACH_END() }}} while(0)
 
-
-
-
+/* Allocate the list data and set the default value for it. */
+#define INIT_LIST_DATA_OVER(key, value) INIT_LIST_DATA(key, value, true)
 
 
 
