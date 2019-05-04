@@ -260,8 +260,8 @@ parse_http_stream(const char *http_stream, int *str_len)
                 /* Request HTTP/VERSION */
                 value_data = INIT_LIST();
                 value_data->delete_func   = __delete_stream_data__;
-                value_data->node.data_ptr = INIT_LIST_DATA_OVER(
-                    "http_version", string_substr( http_stream + _i_pos, _i - _i_pos )
+                value_data->node.data_ptr = INIT_LIST_DATA(
+                    "http_version", string_substr( http_stream + _i_pos, _i - _i_pos ), false
                 );
                 __list_data = APPEND_LIST( __list_data, value_data );
             }

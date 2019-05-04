@@ -16,7 +16,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="39f798f8-5f71-471c-bdfb-cdc73722d9f0" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kernel/tools/string.c" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/tools/string.c" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -49,7 +50,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/kernel/tools/list.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="198">
+            <state relative-caret-position="151">
               <caret line="11" column="55" selection-start-line="11" selection-start-column="43" selection-end-line="11" selection-end-column="55" />
             </state>
           </provider>
@@ -58,10 +59,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/kernel/tools/string.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="196">
-              <caret line="237" column="39" lean-forward="true" selection-start-line="237" selection-start-column="25" selection-end-line="237" selection-end-column="39" />
+            <state relative-caret-position="259">
+              <caret line="263" column="93" selection-start-line="263" selection-start-column="93" selection-end-line="263" selection-end-column="93" />
               <folding>
                 <element signature="e#131#150#0" expanded="true" />
+                <element signature="e#9168#9548#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -71,7 +73,7 @@
         <entry file="file://$PROJECT_DIR$/kernel/net/tcp_server.c">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="271">
-              <caret line="95" column="39" lean-forward="true" selection-start-line="95" selection-start-column="39" selection-end-line="95" selection-end-column="39" />
+              <caret line="95" column="39" selection-start-line="95" selection-start-column="39" selection-end-line="95" selection-end-column="39" />
               <folding>
                 <element signature="e#132#155#0" expanded="true" />
                 <element signature="e#5830#5852#0" expanded="true" />
@@ -89,8 +91,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/kernel/tools/list.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="17" column="36" selection-start-line="17" selection-start-column="36" selection-end-line="17" selection-end-column="36" />
+            <state relative-caret-position="298">
+              <caret line="137" column="8" selection-start-line="137" selection-start-column="8" selection-end-line="137" selection-end-column="8" />
             </state>
           </provider>
         </entry>
@@ -142,10 +144,10 @@
         <option value="$PROJECT_DIR$/test/CMakeLists.txt" />
         <option value="$PROJECT_DIR$/kernel/tools/string.h" />
         <option value="$PROJECT_DIR$/kernel/tools/list.h" />
-        <option value="$PROJECT_DIR$/kernel/tools/string.c" />
         <option value="$PROJECT_DIR$/test/string_split.c" />
         <option value="$PROJECT_DIR$/kernel/config.h" />
         <option value="$PROJECT_DIR$/kernel/net/tcp_server.c" />
+        <option value="$PROJECT_DIR$/kernel/tools/string.c" />
       </list>
     </option>
   </component>
@@ -222,12 +224,12 @@
       <workItem from="1556804327356" duration="2503000" />
       <workItem from="1556807162589" duration="28000" />
       <workItem from="1556870176806" duration="19724000" />
-      <workItem from="1556893331294" duration="11739000" />
+      <workItem from="1556893331294" duration="12162000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="33994000" />
+    <option name="totallyTimeSpent" value="34417000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -485,20 +487,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/kernel/tools/list.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="11" column="55" selection-start-line="11" selection-start-column="43" selection-end-line="11" selection-end-column="55" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/kernel/tools/list.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="17" column="36" selection-start-line="17" selection-start-column="36" selection-end-line="17" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/test/CMakeLists.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="216">
@@ -529,10 +517,24 @@
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/kernel/tools/list.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="151">
+          <caret line="11" column="55" selection-start-line="11" selection-start-column="43" selection-end-line="11" selection-end-column="55" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/kernel/tools/list.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="298">
+          <caret line="137" column="8" selection-start-line="137" selection-start-column="8" selection-end-line="137" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/kernel/net/tcp_server.c">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="271">
-          <caret line="95" column="39" lean-forward="true" selection-start-line="95" selection-start-column="39" selection-end-line="95" selection-end-column="39" />
+          <caret line="95" column="39" selection-start-line="95" selection-start-column="39" selection-end-line="95" selection-end-column="39" />
           <folding>
             <element signature="e#132#155#0" expanded="true" />
             <element signature="e#5830#5852#0" expanded="true" />
@@ -543,10 +545,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/kernel/tools/string.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="196">
-          <caret line="237" column="39" lean-forward="true" selection-start-line="237" selection-start-column="25" selection-end-line="237" selection-end-column="39" />
+        <state relative-caret-position="259">
+          <caret line="263" column="93" selection-start-line="263" selection-start-column="93" selection-end-line="263" selection-end-column="93" />
           <folding>
             <element signature="e#131#150#0" expanded="true" />
+            <element signature="e#9168#9548#0" expanded="true" />
           </folding>
         </state>
       </provider>
