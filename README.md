@@ -8,7 +8,41 @@ Xserver是一个完全采用C语言编写的多线程、并发型、模块化的
 
 Xserver的体系架构简单、性能把控度100%，因为采用C语言开发因此能够将机器的性能压榨到极致，比较适合推送服务、消息IM系统等并发场景比较高的系统使用。
 
+#### 扩展开发手册 ####
 
+扩展开发可以使用C语言或者C++语言开发，生成so文件即可，暂未处理BSD系统的kqueue机制，后续增加后支持dylib扩展，具体的开发方法如下：
+
+Xserver默认情况下自动解析http请求协议，按照标准格式进行解析，解析的结果会通过参数返回给扩展库的回调函数的参数中，扩展方法的原型如下：
+
+```
+void (HTTP_FUNC)(list *request_headers, list *query_string_list);
+```
+
+遍历 **Xserver** 自带的 **list** 结构可以使用 **Xserver宏** 遍历即可：
+
+其中 **request_headers** 列表中含有几个固定的键值：
+
+| 字段               | 含义         | 取值                        |
+| ------------------ | ------------ | --------------------------- |
+| **request_method** | 请求方法名称 | GET\|PUT\|POST\|DELETE 等等 |
+| **request_uri**    | 请求URL      | 除去host之后的路径取值      |
+| **http_version**   | HTTP协议版本 | HTTP/1.1                    |
+| **http_body**      | 请求的包主体 | GET请求无包体               |
+
+```
+list *_temp = EMPTY_PTR;
+LIST_FOREACH_VAL(request_headers, _temp) {
+    
+    /* list_data结构体包含一个name字段：键名
+     * value:键值 */
+    list_data *_kv = (list_data *)_temp->node.data_ptr;
+    
+    printf("%s:%s\t", _kv->name, _kv->value);
+    
+} LIST_FOREACH_END();
+```
+
+不要担心内存泄漏问题，Xserver会自动在调用库方法返回后自动释放内存。
 
 压力测试的目标机器配置：
 
