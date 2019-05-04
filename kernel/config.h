@@ -15,6 +15,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <dlfcn.h>
+#include "tools/list.h"
 #ifdef __linux__
 #include <sys/epoll.h>
 #endif
@@ -31,10 +32,18 @@
 	#define false 0
 #endif
 
+/* Default buffer key size */
+#define KEY_BUFFER_SIZE 256
+
 /* The debug mode, when in production set DEBUG to 0 otherwise 1 */
 #define DEBUG true
 
-typedef char *(*FUNC)();
+/* Notice:
+ * This typedef macro defines the extension so library callback
+ * kernel will parse the http request stream into list map, for developer to use.
+ * request_headers contains the http request server info, and query_string_list contains
+ * the query string if exists or null if empty. */
+typedef char *(*HTTP_FUNC)(list *request_headers, list *query_string_list);
 
 /* Some macros for LOG print.
  * default log level is INFO_LEVEL, This level is the most widely common used level,

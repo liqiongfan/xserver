@@ -40,6 +40,16 @@ char *
  * mode: 2 -> trim both right & left space */
 trim_space(char *src, int _mode);
 
+void
+/* Split the string by the delimiter for example:
+ * src: hello||world
+ * delimiter: ||
+ * so first calling result is: result => hello
+ * second invoking result is : world
+ * This function not allocate memory, developer need keep that the result parameter
+ * has memory to store the data */
+split_string(const char *_source, const char *delimiter, char *result, int _over);
+
 char *
 /* Get the socket stream data from the sock when I/O reading is available
  * Note that: when IO buffer size is 4096, it will let the kernel buffer mostly useful

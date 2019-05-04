@@ -111,8 +111,8 @@ sleep_for_new_client:
 
 					if ( strlen(_request_uri) == 1 && *_request_uri == '/' ) {
 						void *handle = dlopen("../kernel/extensions/info.so", RTLD_NOW);
-						FUNC f = (FUNC)dlsym(handle, "info");
-						char *s = f();
+						FUNC f = (HTTP_FUNC)dlsym(handle, "info");
+						char *s = f(stream_request_data, EMPTY_PTR);
 						strncat(_buffer_data, s, strlen(s));
 					} else {
 						strncat(_buffer_data, "{\"server\":\"Xserver 0.1.3\"}", 26);
@@ -137,7 +137,6 @@ sleep_for_new_client:
 	} /* end while true */
 
 #endif
-
 	return EMPTY_PTR;
 }
 

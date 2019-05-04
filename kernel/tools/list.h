@@ -14,8 +14,8 @@ __BEGIN_DECL
 
 /* The type __list_node value */
 typedef struct __list_data {
-    char name[256];     /* Node key   */
-    char *value;        /* Node value */
+    char name[KEY_BUFFER_SIZE];     /* Node key   */
+    char *value;                    /* Node value */
 } list_data;
 
 /* _list_node is the node for the list */
@@ -62,7 +62,6 @@ typedef struct _list {
 #define LIST_GET_VAL_PTR(__list) (__list)->node
 #define LIST_DELETE(__list) (__list).node_status = LIST_NODE_DELETE
 #define LIST_DELETE_PTR(__list) (*__list).node_status = LIST_NODE_DELETE
-
 
 list_data *
 INIT_LIST_DATA(char *, char *, int);
