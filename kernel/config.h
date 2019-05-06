@@ -8,6 +8,22 @@
 #ifndef XSERVER_CONFIG_H
 #define XSERVER_CONFIG_H
 
+/* Default buffer key size */
+#define KEY_BUFFER_SIZE 256
+#define BUCKET_SIZE 5000
+
+#ifdef __cplusplus
+#define EMPTY_PTR nullptr
+	#define __BEGIN_DECL extern "C" {
+	#define __END_DECL };
+#else
+    #define EMPTY_PTR NULL
+    #define __BEGIN_DECL
+    #define __END_DECL
+    #define true  1
+    #define false 0
+#endif
+
 #include <stdlib.h>
 #include <assert.h>
 #include <pthread.h>
@@ -20,21 +36,6 @@
 #include <sys/epoll.h>
 #endif
 
-#ifdef __cplusplus
-	#define EMPTY_PTR nullptr
-	#define __BEGIN_DECL extern "C" {
-	#define __END_DECL };
-#else
-	#define EMPTY_PTR NULL
-	#define __BEGIN_DECL
-	#define __END_DECL
-	#define true  1
-	#define false 0
-#endif
-
-/* Default buffer key size */
-#define KEY_BUFFER_SIZE 256
-
 /* The debug mode, when in production set DEBUG to 0 otherwise 1 */
 #define DEBUG true
 
@@ -43,7 +44,7 @@
  * kernel will parse the http request stream into list map, for developer to use.
  * request_headers contains the http request server info, and query_string_list contains
  * the query string if exists or null if empty. */
-typedef char *(*HTTP_FUNC)(list *request_headers, list *query_string_list);
+typedef char *(*HTTP_FUNC)(struct _list *request_headers, struct _list *query_string_list);
 
 /* Some macros for LOG print.
  * default log level is INFO_LEVEL, This level is the most widely common used level,
@@ -58,6 +59,11 @@ typedef char *(*HTTP_FUNC)(list *request_headers, list *query_string_list);
 #else
 #define LOG_INFO(level, msg, ...)
 #endif
+
+/* Some macros for type defines */
+typedef unsigned int  uint;
+typedef unsigned long ulong;
+typedef unsigned char uchar;
 
 /* All sub-thread max number is 256, if you want to incr it.
  * you should to modify the following parameter */

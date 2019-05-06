@@ -4,7 +4,11 @@ set(CMAKE_C_STANDARD 99)
 
 add_executable(
         test
-        string_split.c
+        hashtable.c
+        ../kernel/tools/hash.h
+        ../kernel/tools/hashtable.c
+        ../kernel/tools/hashtable.h
+#        string_split.c
         ../kernel/net/tcp_server.c
         ../kernel/net/tcp_server.h
 #        ../kernel/tools/string.c

@@ -10,7 +10,6 @@
 
 #include "../config.h"
 
-__BEGIN_DECL
 
 /* The type __list_node value */
 typedef struct __list_data {
