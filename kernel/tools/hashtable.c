@@ -91,28 +91,27 @@ hash_table_symtable_update(struct __hash_table *hashTable, ulong index,
 
 int
 /* The kernel function to add the key & value into hash table
- * remember that: value_len will omitted other than when value_type is IS_STRING */
+ * remember that: value_len will omitted other than when value_type is IS_STRING
+ * Workflow: if element_size is equal to table_size increase it by BUCKET_SIZE */
 hash_table_key_symtable_update(struct __hash_table *hashTable, char *key, ulong key_len,
     uchar value_type, void *value, ulong value_len)
 {
+    /* Calc the hash code */
     ulong hash_h = xserver_inline_hash_func(key, key_len);
-    ulong index = hash_h % (hashTable->table_size);
-    if ( hashTable->table_size - 1 < index ) {
-        ulong need_size;
-        if ( ( index - hashTable->table_size + 1 ) < BUCKET_SIZE )
-        {
-            need_size = hashTable->table_size + BUCKET_SIZE;
-        }
-        else
-        {
-            need_size = index + BUCKET_SIZE;
-        }
+    
+    /* check the left space, which not used */
+    if ( hashTable->element_size + 10 >= hashTable->table_size )
+    {
+        ulong need_size = hashTable->table_size + BUCKET_SIZE;
         void *_temp_ptr = realloc(hashTable->arBuckets, sizeof(Bucket) * (need_size));
         assert(_temp_ptr != EMPTY_PTR);
         hashTable->arBuckets = _temp_ptr;
         hashTable->free_table_size = need_size - hashTable->table_size;
         hashTable->table_size = need_size;
     }
+    
+    /* Get the data pos. */
+    ulong index = hash_h % (hashTable->table_size);
     
     /* Set the value */
     Bucket *__bucket = ( hashTable->arBuckets + index );
@@ -140,6 +139,9 @@ hash_table_key_symtable_update(struct __hash_table *hashTable, char *key, ulong 
             return false;
     }
     
+    /* After each add op. increase the element_size */
+    hashTable->free_table_size--;
+    hashTable->element_size++;
     return true;
 }
 
