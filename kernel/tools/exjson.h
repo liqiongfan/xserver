@@ -13,6 +13,8 @@
 #include <assert.h>
 #include <stdio.h>
 
+#define EXJSON_API
+
 #define EX_ARRAY  2
 #define EX_OBJECT 3
 
@@ -47,31 +49,31 @@ typedef struct _EXJSON
 #define E_NUM(exjson) (exjson).ele_num
 #define E_NUM_P(exjson) E_NUM(*(exjson))
 
-EXJSON_V *
-INIT_EXJSON_V();
-
-EXJSON *
-INIT_EXJSON();
-
-int add_object_int(EXJSON *exjson, char *key, int val);
-int add_object_double(EXJSON *exjson, char *key, double val);
-int add_object_string(EXJSON *exjson, char *key, char *val);
-int add_object_object(EXJSON *exjson, char *key, void *val);
-int add_object_array(EXJSON *exjson, char *key, void *val);
-int add_object_ptr(EXJSON *exjson, char *key, void *val, unsigned char val_type);
-int add_array_int(EXJSON *exjson, int val);
-int add_array_double(EXJSON *exjson, double val);
-int add_array_string(EXJSON *exjson, char *val);
-int add_array_object(EXJSON *exjson, void *val);
-int add_array_array(EXJSON *exjson, void *val);
-int add_array_ptr(EXJSON *exjson, void *val, unsigned char val_type);
+EXJSON_API EXJSON_V * INIT_EXJSON_V();
+EXJSON_API EXJSON * INIT_EXJSON();
+EXJSON_API int add_object_int(EXJSON *exjson, char *key, long val);
+EXJSON_API int add_object_double(EXJSON *exjson, char *key, double val);
+EXJSON_API int add_object_string(EXJSON *exjson, char *key, char *val);
+EXJSON_API int add_object_object(EXJSON *exjson, char *key, void *val);
+EXJSON_API int add_object_array(EXJSON *exjson, char *key, void *val);
+EXJSON_API int add_object_ptr(EXJSON *exjson, char *key, void *val, unsigned char val_type);
+EXJSON_API int add_array_int(EXJSON *exjson, long val);
+EXJSON_API int add_array_double(EXJSON *exjson, double val);
+EXJSON_API int add_array_string(EXJSON *exjson, char *val);
+EXJSON_API int add_array_object(EXJSON *exjson, void *val);
+EXJSON_API int add_array_array(EXJSON *exjson, void *val);
+EXJSON_API int add_array_ptr(EXJSON *exjson, void *val, unsigned char val_type);
 void print_exjson(EXJSON *exjson, int _num);
-void destroy_exjson(EXJSON *exjson);
+
 #define PRINT_EXJSON(exjson) print_exjson(exjson, 0)
 EXJSON *exjson_get_array_or_object_from_key(EXJSON *exjson, char *key_name);
 EXJSON *exjson_get_array_or_object_from_index(EXJSON *exjson, int index);
-void *exjson_get_val_from_key(EXJSON *exjson, char *key);
-void *exjson_get_val_from_index(EXJSON *exjson, int index);
-extern EXJSON *decode_json(char *json_string);
+
+/* Here are some API for outer used */
+EXJSON_API void *exjson_get_val_from_key(EXJSON *exjson, char *key);
+EXJSON_API void *exjson_get_val_from_index(EXJSON *exjson, int index);
+EXJSON_API extern EXJSON *decode_json(char *json_string);
+EXJSON_API char *encode_json(EXJSON *exjson);
+EXJSON_API void destroy_exjson(EXJSON *exjson);
 
 #endif /* EXJSON_EXJSON_H */

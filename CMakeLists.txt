@@ -16,6 +16,7 @@ add_executable(
     kernel/tools/string.c kernel/tools/string.h
     kernel/tools/hashtable.h kernel/tools/hashtable.c
     kernel/tools/hash.h
+    kernel/tools/stack.c kernel/tools/stack.h
 )
 
 target_link_libraries(Xserver pthread dl)
