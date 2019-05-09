@@ -99,10 +99,25 @@
 		<Unit filename="/home/josin/xserver/kernel/net/tcp_server.h">
 			<Option target="Xserver"/>
 		</Unit>
+		<Unit filename="/home/josin/xserver/kernel/tools/hash.h">
+			<Option target="Xserver"/>
+		</Unit>
+		<Unit filename="/home/josin/xserver/kernel/tools/hashtable.c">
+			<Option target="Xserver"/>
+		</Unit>
+		<Unit filename="/home/josin/xserver/kernel/tools/hashtable.h">
+			<Option target="Xserver"/>
+		</Unit>
 		<Unit filename="/home/josin/xserver/kernel/tools/list.c">
 			<Option target="Xserver"/>
 		</Unit>
 		<Unit filename="/home/josin/xserver/kernel/tools/list.h">
+			<Option target="Xserver"/>
+		</Unit>
+		<Unit filename="/home/josin/xserver/kernel/tools/string.c">
+			<Option target="Xserver"/>
+		</Unit>
+		<Unit filename="/home/josin/xserver/kernel/tools/string.h">
 			<Option target="Xserver"/>
 		</Unit>
 		<Unit filename="/home/josin/xserver/main.c">

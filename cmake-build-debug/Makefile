@@ -204,6 +204,33 @@ kernel/net/tcp_server.c.s:
 	$(MAKE) -f CMakeFiles/Xserver.dir/build.make CMakeFiles/Xserver.dir/kernel/net/tcp_server.c.s
 .PHONY : kernel/net/tcp_server.c.s
 
+kernel/tools/hashtable.o: kernel/tools/hashtable.c.o
+
+.PHONY : kernel/tools/hashtable.o
+
+# target to build an object file
+kernel/tools/hashtable.c.o:
+	$(MAKE) -f CMakeFiles/Xserver.dir/build.make CMakeFiles/Xserver.dir/kernel/tools/hashtable.c.o
+.PHONY : kernel/tools/hashtable.c.o
+
+kernel/tools/hashtable.i: kernel/tools/hashtable.c.i
+
+.PHONY : kernel/tools/hashtable.i
+
+# target to preprocess a source file
+kernel/tools/hashtable.c.i:
+	$(MAKE) -f CMakeFiles/Xserver.dir/build.make CMakeFiles/Xserver.dir/kernel/tools/hashtable.c.i
+.PHONY : kernel/tools/hashtable.c.i
+
+kernel/tools/hashtable.s: kernel/tools/hashtable.c.s
+
+.PHONY : kernel/tools/hashtable.s
+
+# target to generate assembly for a file
+kernel/tools/hashtable.c.s:
+	$(MAKE) -f CMakeFiles/Xserver.dir/build.make CMakeFiles/Xserver.dir/kernel/tools/hashtable.c.s
+.PHONY : kernel/tools/hashtable.c.s
+
 kernel/tools/list.o: kernel/tools/list.c.o
 
 .PHONY : kernel/tools/list.o
@@ -230,6 +257,33 @@ kernel/tools/list.s: kernel/tools/list.c.s
 kernel/tools/list.c.s:
 	$(MAKE) -f CMakeFiles/Xserver.dir/build.make CMakeFiles/Xserver.dir/kernel/tools/list.c.s
 .PHONY : kernel/tools/list.c.s
+
+kernel/tools/string.o: kernel/tools/string.c.o
+
+.PHONY : kernel/tools/string.o
+
+# target to build an object file
+kernel/tools/string.c.o:
+	$(MAKE) -f CMakeFiles/Xserver.dir/build.make CMakeFiles/Xserver.dir/kernel/tools/string.c.o
+.PHONY : kernel/tools/string.c.o
+
+kernel/tools/string.i: kernel/tools/string.c.i
+
+.PHONY : kernel/tools/string.i
+
+# target to preprocess a source file
+kernel/tools/string.c.i:
+	$(MAKE) -f CMakeFiles/Xserver.dir/build.make CMakeFiles/Xserver.dir/kernel/tools/string.c.i
+.PHONY : kernel/tools/string.c.i
+
+kernel/tools/string.s: kernel/tools/string.c.s
+
+.PHONY : kernel/tools/string.s
+
+# target to generate assembly for a file
+kernel/tools/string.c.s:
+	$(MAKE) -f CMakeFiles/Xserver.dir/build.make CMakeFiles/Xserver.dir/kernel/tools/string.c.s
+.PHONY : kernel/tools/string.c.s
 
 main.o: main.c.o
 
@@ -276,9 +330,15 @@ help:
 	@echo "... kernel/net/tcp_server.o"
 	@echo "... kernel/net/tcp_server.i"
 	@echo "... kernel/net/tcp_server.s"
+	@echo "... kernel/tools/hashtable.o"
+	@echo "... kernel/tools/hashtable.i"
+	@echo "... kernel/tools/hashtable.s"
 	@echo "... kernel/tools/list.o"
 	@echo "... kernel/tools/list.i"
 	@echo "... kernel/tools/list.s"
+	@echo "... kernel/tools/string.o"
+	@echo "... kernel/tools/string.i"
+	@echo "... kernel/tools/string.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

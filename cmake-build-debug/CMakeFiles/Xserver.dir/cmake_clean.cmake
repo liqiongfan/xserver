@@ -4,6 +4,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/Xserver.dir/kernel/tools/list.c.o"
   "CMakeFiles/Xserver.dir/kernel/crypts/base64.c.o"
   "CMakeFiles/Xserver.dir/kernel/crypts/md5.c.o"
+  "CMakeFiles/Xserver.dir/kernel/tools/string.c.o"
+  "CMakeFiles/Xserver.dir/kernel/tools/hashtable.c.o"
   "Xserver.pdb"
   "Xserver"
 )
