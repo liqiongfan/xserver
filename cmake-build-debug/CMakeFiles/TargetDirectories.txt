@@ -1,0 +1,3 @@
+/home/josin/xserver/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/josin/xserver/cmake-build-debug/CMakeFiles/Xserver.dir
+/home/josin/xserver/cmake-build-debug/CMakeFiles/edit_cache.dir
