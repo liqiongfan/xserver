@@ -3,15 +3,19 @@
     #include <stdlib.h>
     #include "stack.h"
     #include "exjson.h"
+    extern int yylex();
+    extern int yylineno;
+    extern char *yytext;
+    int _status = 1;
     typedef struct yy_buffer_state * YY_BUFFER_STATE;
     extern int yyparse();
     extern YY_BUFFER_STATE yy_scan_string(char * str);
     extern void yy_delete_buffer(YY_BUFFER_STATE buffer);
     extern void yyerror(char *);
     /* (INT:    2) (DOUBLE: 3) (STR:    4)
-     * (ARRAY:  5) (OBJECT: 6) */
-     E_STACK   *value_stack,
-               *exjson_stack;
+     * (ARRAY:  5) (OBJECT: 6) (true    7)
+     * (false:  8) (null:   9) */
+     E_STACK   *exjson_stack;
      EXJSON    *exjson;
      E_STACK_V *temp_exjson_stack;
 %}
@@ -67,6 +71,7 @@ object_key_pair
                 exjson = INIT_EXJSON();
                 push(exjson_stack, exjson, 0);
                 add_object_string(exjson, $1.ptr, $3.ptr);
+                free($3.ptr);
                 break;
             case SV_ARRAY:
                 temp_exjson_stack = pop(exjson_stack);
@@ -88,6 +93,7 @@ object_key_pair
                 add_object_object(exjson, $1.ptr, SV_DATA_P(temp_exjson_stack));
                 break;
         }
+        free($1.ptr);
     }
     |  object_key_pair ',' T_STR ':' value
     {
@@ -101,9 +107,10 @@ object_key_pair
                 break;
             case SV_STRING:
                 add_object_string(exjson, $3.ptr, $5.ptr);
+                free($5.ptr);
                 break;
             case SV_ARRAY:
-        temp_exjson_stack = pop(exjson_stack);
+        	temp_exjson_stack = pop(exjson_stack);
                 add_object_array(SV_DATA_P(SV_NEXT_P(temp_exjson_stack)), $3.ptr, SV_DATA_P(temp_exjson_stack));
                 exjson = SV_DATA_P(SV_NEXT_P(temp_exjson_stack));
                 break;
@@ -113,6 +120,7 @@ object_key_pair
                 exjson = SV_DATA_P(SV_NEXT_P(temp_exjson_stack));
                 break;
         }
+        free($3.ptr);
     }
 ;
 
@@ -135,6 +143,7 @@ array_data
                 exjson = INIT_EXJSON();
                 push(exjson_stack, exjson, 0);
                 add_array_string(exjson, $1.ptr);
+                free($1.ptr);
                 break;
             case SV_ARRAY:
                 /* array */
@@ -164,6 +173,7 @@ array_data
                 break;
             case SV_STRING:
                 add_array_string(exjson, $3.ptr);
+                free($3.ptr);
                 break;
             case SV_ARRAY:
                 temp_exjson_stack = pop(exjson_stack);
@@ -209,17 +219,17 @@ value
 EXJSON *decode_json(char *json_string)
 {
     exjson_stack = INIT_STACK();
-    value_stack  = INIT_STACK();
-    exjson       = INIT_EXJSON();
 
     YY_BUFFER_STATE buffer = yy_scan_string(json_string);
     yyparse();
     yy_delete_buffer(buffer);
-    destroy_stack(value_stack);
+    destroy_stack2(exjson_stack);
+    if ( !_status ) { destroy_exjson(exjson); return NULL; }
     return exjson;
 }
 
-void yyerror(char *str)
+void yyerror(char *msg)
 {
-    printf("%s\n", str);
+    _status = 0;
+    fprintf(stderr, "\n%d: %s at '%s'\n", yylineno, msg, yytext);
 }

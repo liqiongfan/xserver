@@ -64,6 +64,7 @@ int push_int_tag(E_STACK *, int val, unsigned char tag);
 int push_double(E_STACK *, double val);
 int push_string(E_STACK *, char *str, int _re_alloc_);
 void destroy_stack(E_STACK *);
+void destroy_stack2(E_STACK *stack);
 
 
 #endif /* EXJSON_STACK_H */

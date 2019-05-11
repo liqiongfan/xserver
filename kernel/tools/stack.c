@@ -18,7 +18,10 @@ E_STACK *
 INIT_STACK()
 {
 	E_STACK *ptr = malloc(sizeof(E_STACK));
-	assert(ptr != NULL);
+	if ( ptr == NULL )
+	{
+		free(ptr);return NULL;
+	}
 	memset(ptr, 0, sizeof(E_STACK));
 	return ptr;
 }
@@ -27,10 +30,12 @@ E_STACK_V *
 INIT_STACK_V()
 {
 	E_STACK_V *ptr = malloc(sizeof(E_STACK_V));
+	if ( ptr == NULL )
+	{
+		free(ptr);return NULL;
+	}
 	SV_PREV_P(ptr) = NULL;
 	SV_NEXT_P(ptr) = NULL;
-
-	assert(ptr != NULL);
 	memset(ptr, 0, sizeof(E_STACK_V));
 	return ptr;
 }
@@ -45,7 +50,10 @@ push(E_STACK *stack, void *data, size_t size)
 	if ( size )
 	{
 		SV_DATA_P(temp_val) = malloc(size);
-		assert(SV_DATA_P(temp_val) != NULL);
+		if ( SV_DATA_P(temp_val) == NULL )
+		{
+			free(SV_DATA_P(temp_val));return 0;
+		}
 		memcpy(SV_DATA_P(temp_val), data, size);
 	}
 	else
@@ -75,7 +83,10 @@ push_int(E_STACK *stack, int val)
 	SV_PREV_P(temp_val) = NULL;
 	SV_NEXT_P(temp_val) = NULL;
 	SV_DATA_P(temp_val) = malloc(sizeof(int));
-	assert(SV_DATA_P(temp_val) != NULL);
+	if ( SV_DATA_P(temp_val) == NULL )
+	{
+		free(SV_DATA_P(temp_val));return 0;
+	}
 	memcpy(SV_DATA_P(temp_val), &val, sizeof(int));
 	SV_TAG_P(temp_val) = SV_INT;
 
@@ -100,7 +111,10 @@ push_int_tag(E_STACK *stack, int val, unsigned char tag)
 	SV_PREV_P(temp_val) = NULL;
 	SV_NEXT_P(temp_val) = NULL;
 	SV_DATA_P(temp_val) = malloc(sizeof(int));
-	assert(SV_DATA_P(temp_val) != NULL);
+	if ( SV_DATA_P(temp_val) == NULL )
+	{
+		free(SV_DATA_P(temp_val)); return 0;
+	}
 	memcpy(SV_DATA_P(temp_val), &val, sizeof(int));
 	SV_TAG_P(temp_val) = tag;
 
@@ -125,7 +139,10 @@ push_double(E_STACK *stack, double val)
 	SV_PREV_P(temp_val) = NULL;
 	SV_NEXT_P(temp_val) = NULL;
 	SV_DATA_P(temp_val) = malloc(sizeof(double));
-	assert(SV_DATA_P(temp_val) != NULL);
+	if ( SV_DATA_P(temp_val) == NULL )
+	{
+		free( SV_DATA_P(temp_val) ); return 0;
+	}
 	memcpy(SV_DATA_P(temp_val), &val, sizeof(double));
 	SV_TAG_P(temp_val) = SV_DOUBLE;
 
@@ -154,6 +171,10 @@ push_string(E_STACK *stack, char *str, int _re_alloc_)
 	{
 		str_len = strlen(str) + 1;
 		SV_DATA_P(temp_val) = malloc(str_len);
+		if ( SV_DATA_P(temp_val) == NULL )
+		{
+			free( SV_DATA_P(temp_val) ); return 0;
+		}
 		memset(SV_DATA_P(temp_val), 0, str_len);
 		memcpy(SV_DATA_P(temp_val), str, str_len - 1);
 	}
@@ -209,6 +230,31 @@ destroy_stack(E_STACK *stack)
             next = prev;
         }
         free( SV_DATA_P( next ) );
+        free( next );
+    }
+	free(stack);
+}
+
+void
+destroy_stack2(E_STACK *stack)
+{
+	E_STACK_V *head = ST_HEAD_P(stack),
+	          *prev = head, *next;
+    
+	if ( prev )
+    {
+        while ( SV_PREV_P( prev ) )
+            prev = SV_PREV_P( prev );
+    
+        /* Getting the head of the stack
+         * free the memory allocated. */
+        next = prev;
+        while ( SV_NEXT_P( next ) )
+        {
+            prev = SV_NEXT_P( next );
+            free( next );
+            next = prev;
+        }
         free( next );
     }
 	free(stack);
