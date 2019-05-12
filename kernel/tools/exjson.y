@@ -7,6 +7,7 @@
     extern int yylineno;
     extern char *yytext;
     int _status = 1;
+    extern int yylex_destroy();
     typedef struct yy_buffer_state * YY_BUFFER_STATE;
     extern int yyparse();
     extern YY_BUFFER_STATE yy_scan_string(char * str);
@@ -190,23 +191,23 @@ array_data
  ;
 
 value
-    : T_STR 
+    : T_STR
     {
         $$ = $1;
     }
-    | T_INT 
+    | T_INT
     {
         $$ = $1;
     }
-    | T_DOUBLE 
+    | T_DOUBLE
     {
         $$ = $1;
     }
-    | array 
+    | array
     {
        $$.val_type = SV_ARRAY;
     }
-    | object 
+    | object
     {
         $$.val_type = SV_OBJECT;
     }
@@ -219,11 +220,11 @@ value
 EXJSON *decode_json(char *json_string)
 {
     exjson_stack = INIT_STACK();
-
     YY_BUFFER_STATE buffer = yy_scan_string(json_string);
     yyparse();
     yy_delete_buffer(buffer);
     destroy_stack2(exjson_stack);
+    yylex_destroy();
     if ( !_status ) { destroy_exjson(exjson); return NULL; }
     return exjson;
 }
